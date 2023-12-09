@@ -152,7 +152,8 @@ ENV PATH=/opt/conda/bin:$PATH \
 ENV HUGGINGFACE_HUB_CACHE=/data \
     HF_HUB_ENABLE_HF_TRANSFER=1 \
     PORT=80
-FROM runpod/base:0.4.0-cuda11.8.0 ## added as suggested in Discord by Travis Addair on Dec 05th, 2023 
+FROM runpod/base:0.4.0-cuda11.8.0
+## line above added as suggested in Discord by Travis Addair on Dec 05th, 2023 
 WORKDIR /usr/src
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
