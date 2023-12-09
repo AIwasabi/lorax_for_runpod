@@ -152,7 +152,7 @@ ENV PATH=/opt/conda/bin:$PATH \
 ENV HUGGINGFACE_HUB_CACHE=/data \
     HF_HUB_ENABLE_HF_TRANSFER=1 \
     PORT=80
-
+FROM runpod/base:0.4.0-cuda11.8.0 ## added as suggested in Discord by Travis Addair on Dec 05th, 2023 
 WORKDIR /usr/src
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -228,6 +228,24 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2
     unzip awscliv2.zip && \
     sudo ./aws/install
 
-# ENTRYPOINT ["./entrypoint.sh"]
-ENTRYPOINT ["lorax-launcher"]
-CMD ["--json-output"]
+## ENTRYPOINT ["./entrypoint.sh"]
+#ENTRYPOINT ["lorax-launcher"]
+#CMD ["--json-output"]
+# above commented out based on Discord reference see line 155
+
+# added from runpod docker image for the same reason
+
+# Python dependencies
+COPY builder/requirements.txt /requirements.txt
+RUN python3.11 -m pip install --upgrade pip && \
+    python3.11 -m pip install --upgrade -r /requirements.txt --no-cache-dir && \
+    rm /requirements.txt
+
+# NOTE: The base image comes with multiple Python versions pre-installed.
+#       It is reccommended to specify the version of Python when running your code.
+
+
+# Add src files (Worker Template)
+ADD src .
+
+CMD python3.11 -u /handler.py
